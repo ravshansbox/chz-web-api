@@ -1,0 +1,6 @@
+{
+  "events": { "start": "clear" },
+  "exec": "node -r dotenv/config -r ts-node/register",
+  "ext": "ts",
+  "watch": ["prisma", "src", ".env", "nodemon.json", "package.json", "tsconfig.json"]
+}

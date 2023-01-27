@@ -1,13 +1,24 @@
-import http from 'node:http';
+import { createServer } from 'node:http';
+import { app } from './app';
+import { prismaClient } from './prismaClient';
 
-const server = http.createServer();
+const main = async () => {
+  const server = createServer();
 
-server.addListener('request', (_request, response) => {
-  response.end(JSON.stringify({ text: 'hello' }));
-});
+  server.on('request', app.requestListener);
 
-server.addListener('listening', () => {
-  console.log('Listening on', server.address());
-});
+  server.on('listening', () => {
+    console.log('Listening on', server.address());
+  });
 
-server.listen(3000);
+  server.listen(process.env.HTTP_PORT);
+};
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prismaClient.$disconnect();
+  });
