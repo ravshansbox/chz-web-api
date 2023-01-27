@@ -1,12 +1,12 @@
 import { z } from 'zod';
-import { createApp } from './common/createApp';
+import { createRouter } from './common/createRouter';
 import { parseJsonBody, sendJson } from './common/json';
 import { omitProps, sha256 } from './common/utils';
 import { prismaClient } from './prismaClient';
 
-export const app = createApp();
+export const userRouter = createRouter();
 
-app.get('/users', async ({ response }) => {
+userRouter.addRoute('GET', '', async ({ response }) => {
   const users = await prismaClient.user.findMany({});
   sendJson(
     response,
@@ -18,7 +18,7 @@ const UserPostSchema = z.object({
   username: z.string(),
   password: z.string(),
 });
-app.post('/users', async ({ request, response }) => {
+userRouter.addRoute('POST', '', async ({ request, response }) => {
   const body = await parseJsonBody(request);
   const parsedBody = UserPostSchema.parse(body);
   const user = await prismaClient.user.create({

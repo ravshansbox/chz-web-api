@@ -6,6 +6,7 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 type Route = {
   method: Method | null;
+  path: string | null;
   match: MatchFunction<Record<string, string>> | null;
   handlers: Handler[];
 };
@@ -19,14 +20,36 @@ type Context = {
 
 type Handler = (context: Context) => Promise<void> | void;
 
-export const createApp = () => {
+type AddRoute = (method: Method | null, path: string | null, ...handlers: Handler[]) => void;
+
+type AddRouter = (path: string, app: App) => void;
+
+type RequestListener = (request: IncomingMessage, response: ServerResponse) => Promise<void>;
+
+type App = {
+  routes: Route[];
+  addRoute: AddRoute;
+  addRouter: AddRouter;
+  requestListener: RequestListener;
+};
+
+export const createRouter = () => {
   const routes: Route[] = [];
 
-  const addRoute = (method: Method, path: string, ...handlers: Handler[]) => {
-    routes.push({ method, match: createMatch(path), handlers });
+  const addRoute: AddRoute = (method, path, ...handlers) => {
+    const match = path === null ? null : createMatch<Record<string, string>>(path);
+    routes.push({ method, path, match, handlers });
   };
 
-  const requestListener = async (request: IncomingMessage, response: ServerResponse) => {
+  const addRouter: AddRouter = (basePath, app) => {
+    for (const { method, path, handlers } of app.routes) {
+      const fullPath = `${basePath}${path}`;
+      const match = path === null ? null : createMatch<Record<string, string>>(fullPath);
+      routes.push({ method, path: fullPath, match, handlers });
+    }
+  };
+
+  const requestListener: RequestListener = async (request, response) => {
     const url = new URL(request.url ?? '', `http://${request.headers.host}`);
     let matched = false;
     for (const { method, match, handlers } of routes) {
@@ -69,12 +92,9 @@ export const createApp = () => {
   };
 
   return {
-    get: addRoute.bind(null, 'GET'),
-    post: addRoute.bind(null, 'POST'),
-    put: addRoute.bind(null, 'PUT'),
-    delete: addRoute.bind(null, 'DELETE'),
+    routes,
+    addRoute,
+    addRouter,
     requestListener,
   };
 };
-
-export type App = ReturnType<typeof createApp>;

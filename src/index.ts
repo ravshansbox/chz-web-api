@@ -1,11 +1,11 @@
 import { createServer } from 'node:http';
-import { app } from './app';
+import { appRouter } from './appRouter';
 import { prismaClient } from './prismaClient';
 
 const main = async () => {
   const server = createServer();
 
-  server.on('request', app.requestListener);
+  server.on('request', appRouter.requestListener);
 
   server.on('listening', () => {
     console.log('Listening on', server.address());
