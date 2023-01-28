@@ -3,7 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "nodemon src"
+    "build": "tsc",
+    "prisma:db:pull": "npx prisma db pull",
+    "prisma:db:push": "npx prisma db push",
+    "prisma:generate": "npx prisma generate",
+    "prisma:reset": "prisma migrate reset --force",
+    "start": "nodemon src",
+    "test": "echo test"
   },
   "dependencies": {
     "@prisma/client": "^4.9.0",
