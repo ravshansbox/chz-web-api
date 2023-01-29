@@ -19,3 +19,7 @@ export const omitProps = <T extends Record<string, unknown>, K extends keyof T>(
 export const sha256 = (input: string) => {
   return createHash('sha256').update(input).digest().toString();
 };
+
+export const createId = () => {
+  return crypto.randomUUID();
+};

@@ -4,11 +4,20 @@ import { sendJson } from './json';
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-type Route = {
+export class HttpError extends Error {
+  constructor(message: string, public statusCode: number) {
+    super(message);
+  }
+}
+
+export type Route = {
   method: Method | null;
   path: string | null;
-  match: MatchFunction<Record<string, string>> | null;
   handlers: Handler[];
+};
+
+type RouteInternal = Route & {
+  match: MatchFunction<Record<string, string>> | null;
 };
 
 type Context = {
@@ -27,14 +36,14 @@ type AddRouter = (path: string, app: App) => void;
 type RequestListener = (request: IncomingMessage, response: ServerResponse) => Promise<void>;
 
 type App = {
-  routes: Route[];
+  routes: RouteInternal[];
   addRoute: AddRoute;
   addRouter: AddRouter;
   requestListener: RequestListener;
 };
 
 export const createRouter = () => {
-  const routes: Route[] = [];
+  const routes: RouteInternal[] = [];
 
   const addRoute: AddRoute = (method, path, ...handlers) => {
     const match = path === null ? null : createMatch<Record<string, string>>(path);
@@ -80,14 +89,14 @@ export const createRouter = () => {
           }
         }
       } catch (error) {
-        response.statusCode = 500;
-        sendJson(response, { message: 'Something went wrong' });
+        const message = error instanceof Error ? error.message : 'Something went wrong';
+        const statusCode = error instanceof HttpError ? error.statusCode : 500;
+        sendJson(response, { message }, statusCode);
         console.error(error);
       }
     }
     if (!matched) {
-      response.statusCode = 404;
-      sendJson(response, { message: `No route for ${request.method} ${url.pathname}` });
+      sendJson(response, { message: `No route for ${request.method} ${url.pathname}` }, 404);
     }
   };
 

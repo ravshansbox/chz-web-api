@@ -8,9 +8,20 @@ datasource db {
 }
 
 model User {
-  id              Int    @id @default(autoincrement())
+  id              String @id @db.Uuid
   username        String @unique
   password_sha256 String
 
+  access_tokens AccessToken[]
+
   @@map("users")
+}
+
+model AccessToken {
+  id      String @id @db.Uuid
+  user_id String @db.Uuid
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("access_tokens")
 }

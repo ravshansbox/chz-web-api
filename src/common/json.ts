@@ -20,7 +20,8 @@ export const parseJsonBody = async (request: IncomingMessage) => {
   }
 };
 
-export const sendJson = (response: http.ServerResponse, body: unknown) => {
+export const sendJson = (response: http.ServerResponse, body: unknown, statusCode: number) => {
+  response.statusCode = statusCode;
   response.setHeader(HEADERS.CONTENT_TYPE, CONTENT_TYPES.JSON);
   response.end(JSON.stringify(body));
 };
