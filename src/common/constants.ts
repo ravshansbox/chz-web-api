@@ -5,3 +5,5 @@ export const HEADERS = {
 export const CONTENT_TYPES = {
   JSON: 'application/json',
 } as const;
+
+export const { HTTP_PORT = '80' } = process.env;

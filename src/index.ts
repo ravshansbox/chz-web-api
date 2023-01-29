@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
 import { appRouter } from './appRouter';
+import { HTTP_PORT } from './common/constants';
 import { prismaClient } from './prismaClient';
 
 const main = async () => {
@@ -11,7 +12,7 @@ const main = async () => {
     console.log('Listening on', server.address());
   });
 
-  server.listen(process.env.HTTP_PORT);
+  server.listen(Number(HTTP_PORT));
 };
 
 main()
