@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 
 export const objectKeys = <T extends Record<string, unknown>, K = keyof T>(input: T) => {
   return Object.keys(input) as unknown as K[];
@@ -21,5 +21,5 @@ export const sha256 = (input: string) => {
 };
 
 export const createId = () => {
-  return crypto.randomUUID();
+  return randomUUID();
 };
