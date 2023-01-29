@@ -1,17 +1,16 @@
 import { prismaClient } from '../prismaClient';
+import { DEFAULT_USERNAMES, DEFAULT_USER_PASSWORD } from './constants';
 import { createId, sha256 } from './utils';
-
-const defaultUsernames = ['alisher', 'botir', 'ravshan'];
 
 export const seedDatabase = async () => {
   const userCount = await prismaClient.user.count();
   if (userCount === 0) {
     await prismaClient.user.createMany({
-      data: defaultUsernames.map((defaultUsername) => ({
-        id: createId(),
-        username: defaultUsername,
-        password_sha256: sha256('qwerty123456'),
-      })),
+      data: DEFAULT_USERNAMES.split(',').map((username) => {
+        const id = createId();
+        const password_sha256 = sha256(DEFAULT_USER_PASSWORD);
+        return { id, username, password_sha256 };
+      }),
     });
     console.info('Default users created');
   }

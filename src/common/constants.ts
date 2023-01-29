@@ -6,4 +6,8 @@ export const CONTENT_TYPES = {
   JSON: 'application/json',
 } as const;
 
-export const { HTTP_PORT = '80' } = process.env;
+export const {
+  DEFAULT_USERNAMES = 'admin',
+  DEFAULT_USER_PASSWORD = 'admin',
+  HTTP_PORT = '80',
+} = process.env;
