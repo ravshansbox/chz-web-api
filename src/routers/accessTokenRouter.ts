@@ -24,7 +24,7 @@ accessTokenRouter.addRoute('POST', '', async ({ request, response }) => {
   }
   const accessToken = await prismaClient.accessToken.create({
     data: { id: createId(), user_id: user.id },
-    include: { user: { select: { username: true } } },
+    include: { user: { select: { username: true, type: true } } },
   });
   sendJson(response, accessToken, 201);
 });
@@ -36,7 +36,7 @@ const paramsSchema = z.object({
 accessTokenRouter.addRoute('GET', '/:id', async ({ params, response }) => {
   const parsedParams = paramsSchema.parse(params);
   const accessToken = await prismaClient.accessToken.findUnique({
-    include: { user: { select: { username: true } } },
+    include: { user: { select: { username: true, type: true } } },
     where: { id: parsedParams.id },
   });
   if (accessToken === null) {

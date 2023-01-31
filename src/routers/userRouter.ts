@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { User, UserType } from '@prisma/client';
 import { z } from 'zod';
 import { createRouter } from '../common/createRouter';
 import { parseJsonBody, sendJson } from '../common/json';
@@ -17,6 +17,7 @@ userRouter.addRoute('GET', '', async ({ response }) => {
 const UserPostBodySchema = z.object({
   username: z.string(),
   password: z.string(),
+  type: z.nativeEnum(UserType),
 });
 userRouter.addRoute('POST', '', async ({ request, response }) => {
   const body = await parseJsonBody(request);
@@ -26,6 +27,7 @@ userRouter.addRoute('POST', '', async ({ request, response }) => {
       id: createId(),
       username: parsedBody.username,
       password_sha256: sha256(parsedBody.password),
+      type: parsedBody.type,
     },
   });
   sendJson(response, omitColumns(user), 201);

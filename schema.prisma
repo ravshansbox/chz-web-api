@@ -7,10 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserType {
+  ROOT
+  MANAGER
+  WORKER
+}
+
 model User {
-  id              String @id @db.Uuid
-  username        String @unique
+  id              String   @id @db.Uuid
+  username        String   @unique
   password_sha256 String
+  type            UserType
 
   access_tokens AccessToken[]
 
