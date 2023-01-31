@@ -17,7 +17,7 @@ model User {
   id              String   @id @db.Uuid
   username        String   @unique
   password_sha256 String
-  type            UserType
+  type            UserType @default(WORKER)
 
   access_tokens AccessToken[]
 
