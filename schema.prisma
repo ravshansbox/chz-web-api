@@ -7,20 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserType {
-  ROOT
+enum PermissionType {
   MANAGER
   WORKER
 }
 
 model User {
-  id              String   @id @db.Uuid
-  username        String   @unique
+  id              String @id @db.Uuid
+  username        String @unique
   password_sha256 String
-  type            UserType @default(WORKER)
 
   access_tokens AccessToken[] @relation("access_tokens__user_id")
-  companies     Company[]     @relation("companies__owner_id")
+  permissions   Permission[]  @relation("permissions__user_id")
 
   @@map("users")
 }
@@ -35,17 +33,27 @@ model AccessToken {
 }
 
 model Company {
-  id       String @id @db.Uuid
-  owner_id String @db.Uuid
-  name     String
+  id   String @id @db.Uuid
+  name String
 
-  owner User @relation("companies__owner_id", fields: [owner_id], references: [id])
-
-  customers Customer[] @relation("customers__company_id")
-  products  Product[]  @relation("products__company_id")
-  orders    Order[]    @relation("orders__company_id")
+  customers   Customer[]   @relation("customers__company_id")
+  products    Product[]    @relation("products__company_id")
+  orders      Order[]      @relation("orders__company_id")
+  permissions Permission[] @relation("permissions__company_id")
 
   @@map("companies")
+}
+
+model Permission {
+  id         String         @id @db.Uuid
+  company_id String         @db.Uuid
+  user_id    String         @db.Uuid
+  type       PermissionType
+
+  company Company @relation("permissions__company_id", fields: [company_id], references: [id])
+  user    User    @relation("permissions__user_id", fields: [user_id], references: [id])
+
+  @@map("permissions")
 }
 
 model Customer {

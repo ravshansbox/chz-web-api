@@ -1,5 +1,4 @@
-import { IncomingMessage } from 'http';
-import http from 'node:http';
+import { type IncomingMessage, type ServerResponse } from 'node:http';
 import { CONTENT_TYPES, HEADERS } from './constants';
 import { parseBody } from './parseBody';
 
@@ -20,7 +19,7 @@ export const parseJsonBody = async (request: IncomingMessage) => {
   }
 };
 
-export const sendJson = (response: http.ServerResponse, body: unknown, statusCode: number) => {
+export const sendJson = (response: ServerResponse, body: unknown, statusCode: number) => {
   response.statusCode = statusCode;
   response.setHeader(HEADERS.CONTENT_TYPE, CONTENT_TYPES.JSON);
   response.end(JSON.stringify(body));

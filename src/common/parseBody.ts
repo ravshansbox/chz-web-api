@@ -1,4 +1,4 @@
-import { type IncomingMessage } from 'http';
+import { type IncomingMessage } from 'node:http';
 
 export const parseBody = (request: IncomingMessage) => {
   return new Promise<Buffer>((resolve, reject) => {

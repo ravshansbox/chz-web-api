@@ -13,7 +13,7 @@ export class HttpError extends Error {
 export type Route = {
   method: Method | null;
   path: string | null;
-  handlers: Handler[];
+  handler: Handler;
 };
 
 type RouteInternal = Route & {
@@ -29,7 +29,7 @@ type Context = {
 
 type Handler = (context: Context) => Promise<void> | void;
 
-type AddRoute = (method: Method | null, path: string | null, ...handlers: Handler[]) => void;
+type AddRoute = (route: Route) => void;
 
 type AddRouter = (path: string, app: App) => void;
 
@@ -45,23 +45,23 @@ type App = {
 export const createRouter = () => {
   const routes: RouteInternal[] = [];
 
-  const addRoute: AddRoute = (method, path, ...handlers) => {
+  const addRoute: AddRoute = ({ method, path, handler }: Route) => {
     const match = path === null ? null : createMatch<Record<string, string>>(path);
-    routes.push({ method, path, match, handlers });
+    routes.push({ method, path, match, handler });
   };
 
   const addRouter: AddRouter = (basePath, app) => {
-    for (const { method, path, handlers } of app.routes) {
+    for (const { method, path, handler } of app.routes) {
       const fullPath = `${basePath}${path}`;
       const match = path === null ? null : createMatch<Record<string, string>>(fullPath);
-      routes.push({ method, path: fullPath, match, handlers });
+      routes.push({ method, path: fullPath, match, handler });
     }
   };
 
   const requestListener: RequestListener = async (request, response) => {
     const url = new URL(request.url ?? '', `http://${request.headers.host}`);
     let matched = false;
-    for (const { method, match, handlers } of routes) {
+    for (const { method, match, handler } of routes) {
       const isMethodOK = method === null || method === request.method;
       if (!isMethodOK) {
         continue;
@@ -82,11 +82,9 @@ export const createRouter = () => {
       }
       matched = true;
       try {
-        for (const handler of handlers) {
-          const result = handler({ request, response, params, query: url.searchParams });
-          if (result instanceof Promise) {
-            await result;
-          }
+        const result = handler({ request, response, params, query: url.searchParams });
+        if (result instanceof Promise) {
+          await result;
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Something went wrong';

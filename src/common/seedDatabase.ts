@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { type User } from '@prisma/client';
 import { prismaClient } from '../prismaClient';
 import { DEFAULT_USERNAMES, DEFAULT_USER_PASSWORD } from './constants';
 import { createId, sha256 } from './utils';
@@ -12,7 +12,6 @@ export const seedDatabase = async () => {
           id: createId(),
           username,
           password_sha256: sha256(DEFAULT_USER_PASSWORD),
-          type: 'ROOT',
         }),
       ),
     });
