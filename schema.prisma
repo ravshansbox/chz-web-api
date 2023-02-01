@@ -53,6 +53,7 @@ model Permission {
   company Company @relation("permissions__company_id", fields: [company_id], references: [id])
   user    User    @relation("permissions__user_id", fields: [user_id], references: [id])
 
+  @@unique([company_id, user_id])
   @@map("permissions")
 }
 
