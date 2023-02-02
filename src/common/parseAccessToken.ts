@@ -1,6 +1,6 @@
-import { type IncomingMessage } from 'node:http';
+import type { IncomingMessage } from 'node:http';
 import { prismaClient } from '../prismaClient';
-import { HttpError } from './createRouter';
+import { HttpError } from './HttpError';
 
 export const parseAccessToken = async (request: IncomingMessage) => {
   const { authorization } = request.headers;

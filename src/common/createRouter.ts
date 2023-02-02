@@ -1,71 +1,29 @@
-import { type IncomingMessage, type ServerResponse } from 'node:http';
-import { match as createMatch, type MatchFunction } from 'path-to-regexp';
+import type { RequestListener } from 'node:http';
+import { match as createMatch } from 'path-to-regexp';
+import { HttpError } from './HttpError';
 import { sendJson } from './json';
-
-type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
-
-export class HttpError extends Error {
-  constructor(message: string, public statusCode: number) {
-    super(message);
-  }
-}
-
-type Route = {
-  method: Method | null;
-  path: string | null;
-  handler: Handler;
-};
-
-type RouteInternal = Route & {
-  match: MatchFunction<Record<string, string>> | null;
-};
-
-type Context = {
-  request: IncomingMessage;
-  response: ServerResponse;
-  pathParams: Record<string, string>;
-  searchParams: URLSearchParams;
-};
-
-type Handler = (context: Context) => Promise<void> | void;
-
-type AddRoute = (route: Route) => void;
-
-type AddRouter = (path: string, app: App) => void;
-
-type RequestListener = (request: IncomingMessage, response: ServerResponse) => Promise<void>;
-
-type App = {
-  routes: RouteInternal[];
-  addRoute: AddRoute;
-  addRouter: AddRouter;
-  requestListener: RequestListener;
-};
-
-export const createRoute = (method: Method, path: string, handler: Handler): Route => {
-  return { method, path, handler };
-};
+import type { AddRoute, AddRoutes, RouteInternal } from './types';
 
 export const createRouter = () => {
-  const routes: RouteInternal[] = [];
+  const routesInternal: RouteInternal[] = [];
 
   const addRoute: AddRoute = ({ method, path, handler }) => {
     const match = path === null ? null : createMatch<Record<string, string>>(path);
-    routes.push({ method, path, match, handler });
+    routesInternal.push({ method, path, match, handler });
   };
 
-  const addRouter: AddRouter = (basePath, app) => {
-    for (const { method, path, handler } of app.routes) {
+  const addRoutes: AddRoutes = (basePath, { routes }) => {
+    for (const { method, path, handler } of routes) {
       const fullPath = `${basePath}${path}`;
       const match = path === null ? null : createMatch<Record<string, string>>(fullPath);
-      routes.push({ method, path: fullPath, match, handler });
+      routesInternal.push({ method, path: fullPath, match, handler });
     }
   };
 
   const requestListener: RequestListener = async (request, response) => {
     const { pathname, searchParams } = new URL(request.url ?? '', `http://${request.headers.host}`);
     let matched = false;
-    for (const { method, match, handler } of routes) {
+    for (const { method, match, handler } of routesInternal) {
       const isMethodOK = method === null || method === request.method;
       if (!isMethodOK) {
         continue;
@@ -91,8 +49,15 @@ export const createRouter = () => {
           await result;
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Something went wrong';
-        const statusCode = error instanceof HttpError ? error.statusCode : 500;
+        let statusCode = 500;
+        let message: string | object = 'Something went wrong';
+        if (error instanceof Error) {
+          message = error.message;
+        }
+        if (error instanceof HttpError) {
+          statusCode = error.statusCode;
+          message = error.details;
+        }
         sendJson(response, { message }, statusCode);
         console.error(error);
       }
@@ -103,9 +68,9 @@ export const createRouter = () => {
   };
 
   return {
-    routes,
+    routes: routesInternal,
     addRoute,
-    addRouter,
+    addRoutes,
     requestListener,
   };
 };

@@ -1,16 +1,17 @@
 import { z } from 'zod';
-import { createRoute } from '../../common/createRouter';
+import { createRoute } from '../../common/createRoute';
 import { parseJsonBody, sendJson } from '../../common/json';
 import { createId, sha256 } from '../../common/utils';
+import { validate } from '../../common/validate';
 import { prismaClient } from '../../prismaClient';
 
-const postBodySchema = z.object({
+const bodySchema = z.object({
   username: z.string(),
   password: z.string(),
 });
 
 export const createAccessToken = createRoute('POST', '', async ({ request, response }) => {
-  const body = postBodySchema.parse(await parseJsonBody(request));
+  const body = validate(bodySchema, await parseJsonBody(request));
   const user = await prismaClient.user.findUnique({ where: { username: body.username } });
   if (user === null) {
     sendJson(response, { message: 'Invalid username' }, 403);

@@ -8,9 +8,9 @@ import { userRouter } from './routers/users/userRouter';
 
 export const appRouter = createRouter();
 
-appRouter.addRouter('/access-tokens', accessTokenRouter);
-appRouter.addRouter('/companies', companyRouter);
-appRouter.addRouter('/customers', customerRouter);
-appRouter.addRouter('/orders', orderRouter);
-appRouter.addRouter('/products', productRouter);
-appRouter.addRouter('/users', userRouter);
+appRouter.addRoutes('/access-tokens', accessTokenRouter);
+appRouter.addRoutes('/companies', companyRouter);
+appRouter.addRoutes('/customers', customerRouter);
+appRouter.addRoutes('/orders', orderRouter);
+appRouter.addRoutes('/products', productRouter);
+appRouter.addRoutes('/users', userRouter);

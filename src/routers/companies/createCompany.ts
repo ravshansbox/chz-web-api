@@ -1,8 +1,9 @@
 import { z } from 'zod';
-import { createRoute } from '../../common/createRouter';
+import { createRoute } from '../../common/createRoute';
 import { parseJsonBody, sendJson } from '../../common/json';
 import { parseAccessToken } from '../../common/parseAccessToken';
 import { createId } from '../../common/utils';
+import { validate } from '../../common/validate';
 import { prismaClient } from '../../prismaClient';
 
 const bodySchema = z.object({
@@ -11,7 +12,7 @@ const bodySchema = z.object({
 
 export const createCompany = createRoute('POST', '', async ({ request, response }) => {
   const accessToken = await parseAccessToken(request);
-  const body = bodySchema.parse(await parseJsonBody(request));
+  const body = validate(bodySchema, await parseJsonBody(request));
   const company = await prismaClient.company.create({
     data: { id: createId(), name: body.name },
   });

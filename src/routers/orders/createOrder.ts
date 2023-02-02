@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { checkPermission } from '../../common/checkPermission';
-import { createRoute } from '../../common/createRouter';
+import { createRoute } from '../../common/createRoute';
 import { parseJsonBody, sendJson } from '../../common/json';
 import { parseAccessToken } from '../../common/parseAccessToken';
 import { createId } from '../../common/utils';
+import { validate } from '../../common/validate';
 import { prismaClient } from '../../prismaClient';
 
 const bodySchema = z.object({
@@ -13,7 +14,7 @@ const bodySchema = z.object({
 });
 
 export const createOrder = createRoute('POST', '', async ({ request, response }) => {
-  const body = bodySchema.parse(await parseJsonBody(request));
+  const body = validate(bodySchema, await parseJsonBody(request));
   const accessToken = await parseAccessToken(request);
   await checkPermission(body.company_id, accessToken.user_id);
   const order = await prismaClient.order.create({

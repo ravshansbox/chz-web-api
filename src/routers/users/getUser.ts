@@ -1,4 +1,4 @@
-import { createRoute } from '../../common/createRouter';
+import { createRoute } from '../../common/createRoute';
 import { sendJson } from '../../common/json';
 import { prismaClient } from '../../prismaClient';
 
