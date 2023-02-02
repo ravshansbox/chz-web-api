@@ -10,7 +10,7 @@ export class HttpError extends Error {
   }
 }
 
-export type Route = {
+type Route = {
   method: Method | null;
   path: string | null;
   handler: Handler;
@@ -23,8 +23,8 @@ type RouteInternal = Route & {
 type Context = {
   request: IncomingMessage;
   response: ServerResponse;
-  params: Record<string, string>;
-  query: URLSearchParams;
+  pathParams: Record<string, string>;
+  searchParams: URLSearchParams;
 };
 
 type Handler = (context: Context) => Promise<void> | void;
@@ -42,10 +42,14 @@ type App = {
   requestListener: RequestListener;
 };
 
+export const createRoute = (method: Method, path: string, handler: Handler): Route => {
+  return { method, path, handler };
+};
+
 export const createRouter = () => {
   const routes: RouteInternal[] = [];
 
-  const addRoute: AddRoute = ({ method, path, handler }: Route) => {
+  const addRoute: AddRoute = ({ method, path, handler }) => {
     const match = path === null ? null : createMatch<Record<string, string>>(path);
     routes.push({ method, path, match, handler });
   };
@@ -59,7 +63,7 @@ export const createRouter = () => {
   };
 
   const requestListener: RequestListener = async (request, response) => {
-    const url = new URL(request.url ?? '', `http://${request.headers.host}`);
+    const { pathname, searchParams } = new URL(request.url ?? '', `http://${request.headers.host}`);
     let matched = false;
     for (const { method, match, handler } of routes) {
       const isMethodOK = method === null || method === request.method;
@@ -67,14 +71,14 @@ export const createRouter = () => {
         continue;
       }
       let isPathOK = false;
-      let params: Record<string, string> = {};
+      let pathParams: Record<string, string> = {};
       if (match === null) {
         isPathOK = true;
       } else {
-        const matchResult = match(url.pathname);
+        const matchResult = match(pathname);
         if (matchResult !== false) {
           isPathOK = true;
-          params = matchResult.params;
+          pathParams = matchResult.params;
         }
       }
       if (!isPathOK) {
@@ -82,7 +86,7 @@ export const createRouter = () => {
       }
       matched = true;
       try {
-        const result = handler({ request, response, params, query: url.searchParams });
+        const result = handler({ request, response, pathParams, searchParams });
         if (result instanceof Promise) {
           await result;
         }
@@ -94,7 +98,7 @@ export const createRouter = () => {
       }
     }
     if (!matched) {
-      sendJson(response, { message: `No route for ${request.method} ${url.pathname}` }, 404);
+      sendJson(response, { message: `No route for ${request.method} ${pathname}` }, 404);
     }
   };
 

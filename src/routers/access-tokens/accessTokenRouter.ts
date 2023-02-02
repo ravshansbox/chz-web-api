@@ -1,8 +1,8 @@
 import { createRouter } from '../../common/createRouter';
 import { createAccessToken } from './createAccessToken';
-import { fetchAccessToken } from './fetchAccessToken';
+import { getAccessToken } from './getAccessToken';
 
 export const accessTokenRouter = createRouter();
 
 accessTokenRouter.addRoute(createAccessToken);
-accessTokenRouter.addRoute(fetchAccessToken);
+accessTokenRouter.addRoute(getAccessToken);

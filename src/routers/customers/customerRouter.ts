@@ -1,8 +1,8 @@
 import { createRouter } from '../../common/createRouter';
 import { createCustomer } from './createCustomer';
-import { fetchCustomers } from './fetchCustomers';
+import { getCustomers } from './getCustomers';
 
 export const customerRouter = createRouter();
 
 customerRouter.addRoute(createCustomer);
-customerRouter.addRoute(fetchCustomers);
+customerRouter.addRoute(getCustomers);

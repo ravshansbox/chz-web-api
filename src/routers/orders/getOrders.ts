@@ -3,20 +3,16 @@ import { checkPermission } from '../../common/checkPermission';
 import { createRoute } from '../../common/createRouter';
 import { parseJsonBody, sendJson } from '../../common/json';
 import { parseAccessToken } from '../../common/parseAccessToken';
-import { createId } from '../../common/utils';
 import { prismaClient } from '../../prismaClient';
 
 const bodySchema = z.object({
   company_id: z.string().uuid(),
-  name: z.string(),
 });
 
-export const createCustomer = createRoute('POST', '', async ({ request, response }) => {
-  const body = bodySchema.parse(await parseJsonBody(request));
+export const getOrders = createRoute('GET', '', async ({ request, response }) => {
   const accessToken = await parseAccessToken(request);
+  const body = bodySchema.parse(await parseJsonBody(request));
   await checkPermission(body.company_id, accessToken.user_id);
-  const customer = await prismaClient.customer.create({
-    data: { id: createId(), company_id: body.company_id, name: body.name },
-  });
-  sendJson(response, customer, 201);
+  const orders = await prismaClient.order.findMany({ where: { company_id: body.company_id } });
+  sendJson(response, orders, 200);
 });

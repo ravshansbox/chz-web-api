@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type Route } from '../../common/createRouter';
+import { createRoute } from '../../common/createRouter';
 import { sendJson } from '../../common/json';
 import { prismaClient } from '../../prismaClient';
 
@@ -7,14 +7,14 @@ const paramsSchema = z.object({
   id: z.string(),
 });
 
-export const fetchAccessToken: Route = {
-  method: 'GET',
-  path: '/:id',
-  handler: async ({ params, response }) => {
-    const parsedParams = paramsSchema.parse(params);
+export const getAccessToken = createRoute(
+  'GET',
+  '/:id',
+  async ({ pathParams: rawPathParams, response }) => {
+    const pathParams = paramsSchema.parse(rawPathParams);
     const accessToken = await prismaClient.accessToken.findUnique({
       include: { user: { select: { id: true, username: true } } },
-      where: { id: parsedParams.id },
+      where: { id: pathParams.id },
     });
     if (accessToken === null) {
       sendJson(response, { message: 'Invalid access token id' }, 404);
@@ -22,4 +22,4 @@ export const fetchAccessToken: Route = {
     }
     sendJson(response, accessToken, 200);
   },
-};
+);
