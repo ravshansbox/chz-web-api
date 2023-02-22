@@ -1,3 +1,4 @@
+import { createRequestListener } from '@ravshansbox/mini-app';
 import { createServer } from 'node:http';
 import { appRouter } from './appRouter';
 import { HTTP_PORT } from './common/constants';
@@ -8,7 +9,7 @@ const main = async () => {
   await seedDatabase();
 
   const server = createServer();
-  server.on('request', appRouter.requestListener);
+  server.on('request', createRequestListener(appRouter.routes));
   server.on('listening', () => {
     console.log('Listening on', server.address());
   });

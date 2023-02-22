@@ -1,8 +1,7 @@
+import { parseJsonBody, sendJson, type Route } from '@ravshansbox/mini-app';
 import { z } from 'zod';
 import { checkPermission } from '../../common/checkPermission';
-import { parseJsonBody, sendJson } from '../../common/json';
 import { parseAccessToken } from '../../common/parseAccessToken';
-import { Route } from '../../common/types';
 import { createId } from '../../common/utils';
 import { validate } from '../../common/validate';
 import { prismaClient } from '../../prismaClient';

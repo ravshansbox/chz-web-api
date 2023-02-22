@@ -1,6 +1,6 @@
+import { HttpError } from '@ravshansbox/mini-app';
 import type { IncomingMessage } from 'node:http';
 import { prismaClient } from '../prismaClient';
-import { HttpError } from './HttpError';
 
 export const parseAccessToken = async (request: IncomingMessage) => {
   const { authorization } = request.headers;

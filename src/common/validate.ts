@@ -1,5 +1,5 @@
+import { HttpError } from '@ravshansbox/mini-app';
 import { ZodError, ZodType } from 'zod';
-import { HttpError } from './HttpError';
 
 export const validate = <T>(schema: ZodType<T>, value: unknown) => {
   try {

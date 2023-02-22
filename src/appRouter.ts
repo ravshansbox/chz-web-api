@@ -1,4 +1,4 @@
-import { createRouter } from './common/createRouter';
+import { createRouter } from '@ravshansbox/mini-app';
 import { accessTokenRouter } from './routers/access-tokens/accessTokenRouter';
 import { companyRouter } from './routers/companies/companyRouter';
 import { customerRouter } from './routers/customers/customerRouter';
@@ -8,9 +8,9 @@ import { userRouter } from './routers/users/userRouter';
 
 export const appRouter = createRouter();
 
-appRouter.addRoutes('/access-tokens', accessTokenRouter);
-appRouter.addRoutes('/companies', companyRouter);
-appRouter.addRoutes('/customers', customerRouter);
-appRouter.addRoutes('/orders', orderRouter);
-appRouter.addRoutes('/products', productRouter);
-appRouter.addRoutes('/users', userRouter);
+appRouter.addRoutes('/access-tokens', accessTokenRouter.routes);
+appRouter.addRoutes('/companies', companyRouter.routes);
+appRouter.addRoutes('/customers', customerRouter.routes);
+appRouter.addRoutes('/orders', orderRouter.routes);
+appRouter.addRoutes('/products', productRouter.routes);
+appRouter.addRoutes('/users', userRouter.routes);

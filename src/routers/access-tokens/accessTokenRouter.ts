@@ -1,4 +1,4 @@
-import { createRouter } from '../../common/createRouter';
+import { createRouter } from '@ravshansbox/mini-app';
 import { createAccessToken } from './createAccessToken';
 import { getAccessToken } from './getAccessToken';
 

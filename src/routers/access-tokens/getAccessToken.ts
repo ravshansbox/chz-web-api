@@ -1,6 +1,5 @@
+import { sendJson, type Route } from '@ravshansbox/mini-app';
 import { z } from 'zod';
-import { createRoute } from '../../common/createRoute';
-import { sendJson } from '../../common/json';
 import { validate } from '../../common/validate';
 import { prismaClient } from '../../prismaClient';
 
@@ -8,10 +7,10 @@ const paramsSchema = z.object({
   id: z.string().uuid(),
 });
 
-export const getAccessToken = createRoute(
-  'GET',
-  '/:id',
-  async ({ pathParams: rawPathParams, response }) => {
+export const getAccessToken: Route = {
+  method: 'GET',
+  path: '/:id',
+  handler: async ({ pathParams: rawPathParams, response }) => {
     const pathParams = validate(paramsSchema, rawPathParams);
     const accessToken = await prismaClient.accessToken.findUnique({
       include: { user: { select: { id: true, username: true } } },
@@ -23,4 +22,4 @@ export const getAccessToken = createRoute(
     }
     sendJson(response, accessToken, 200);
   },
-);
+};

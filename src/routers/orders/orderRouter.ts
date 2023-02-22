@@ -1,4 +1,4 @@
-import { createRouter } from '../../common/createRouter';
+import { createRouter } from '@ravshansbox/mini-app';
 import { createOrder } from './createOrder';
 
 export const orderRouter = createRouter();

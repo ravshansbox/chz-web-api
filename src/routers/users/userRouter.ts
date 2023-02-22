@@ -1,4 +1,4 @@
-import { createRouter } from '../../common/createRouter';
+import { createRouter } from '@ravshansbox/mini-app';
 import { createUser } from './createUser';
 import { getUser } from './getUser';
 

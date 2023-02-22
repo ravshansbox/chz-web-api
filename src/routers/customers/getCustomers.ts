@@ -1,7 +1,6 @@
+import { sendJson, type Route } from '@ravshansbox/mini-app';
 import { z } from 'zod';
 import { checkPermission } from '../../common/checkPermission';
-import { createRoute } from '../../common/createRoute';
-import { sendJson } from '../../common/json';
 import { parseAccessToken } from '../../common/parseAccessToken';
 import { validate } from '../../common/validate';
 import { prismaClient } from '../../prismaClient';
@@ -10,10 +9,10 @@ const searchParamsSchema = z.object({
   company_id: z.string().uuid(),
 });
 
-export const getCustomers = createRoute(
-  'GET',
-  '',
-  async ({ searchParams: rawSearchParams, request, response }) => {
+export const getCustomers: Route = {
+  method: 'GET',
+  path: '',
+  handler: async ({ searchParams: rawSearchParams, request, response }) => {
     const searchParams = validate(searchParamsSchema, rawSearchParams);
     const accessToken = await parseAccessToken(request);
     await checkPermission(searchParams.company_id, accessToken.user_id);
@@ -22,4 +21,4 @@ export const getCustomers = createRoute(
     });
     sendJson(response, customers, 200);
   },
-);
+};
