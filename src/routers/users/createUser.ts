@@ -19,6 +19,7 @@ export const createUser: Route = {
         id: createId(),
         password_sha256: sha256(body.password),
         username: body.username,
+        is_root: false,
       },
       select: { id: true, username: true },
     });

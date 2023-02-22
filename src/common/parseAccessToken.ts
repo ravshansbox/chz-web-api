@@ -13,7 +13,7 @@ export const parseAccessToken = async (request: IncomingMessage) => {
   }
   const accessTokenId = result[1];
   const accessToken = await prismaClient.accessToken.findUnique({
-    include: { user: { select: { id: true, username: true } } },
+    include: { user: { select: { id: true, username: true, is_root: true } } },
     where: { id: accessTokenId },
   });
   if (accessToken === null) {

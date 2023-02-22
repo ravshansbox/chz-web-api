@@ -13,9 +13,10 @@ enum PermissionType {
 }
 
 model User {
-  id              String @id @db.Uuid
-  username        String @unique
+  id              String  @id @db.Uuid
+  username        String  @unique
   password_sha256 String
+  is_root         Boolean
 
   access_tokens AccessToken[] @relation("access_tokens__user_id")
   permissions   Permission[]  @relation("permissions__user_id")

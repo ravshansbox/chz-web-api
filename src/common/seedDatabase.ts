@@ -12,6 +12,7 @@ export const seedDatabase = async () => {
           id: createId(),
           username,
           password_sha256: sha256(DEFAULT_USER_PASSWORD),
+          is_root: true,
         }),
       ),
     });

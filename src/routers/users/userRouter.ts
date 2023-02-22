@@ -1,8 +1,8 @@
 import { createRouter } from '@ravshansbox/mini-app';
 import { createUser } from './createUser';
-import { getUser } from './getUser';
+import { getUsers } from './getUsers';
 
 export const userRouter = createRouter();
 
-userRouter.addRoute(getUser);
+userRouter.addRoute(getUsers);
 userRouter.addRoute(createUser);
