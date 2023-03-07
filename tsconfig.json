@@ -4,6 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "dist",
+    "resolveJsonModule": true,
     "strict": true,
     "target": "es2017"
   }

@@ -13,4 +13,4 @@ RUN npm ci --omit=dev
 FROM base
 COPY --from=prod /app/node_modules ./node_modules
 COPY --from=dev /app/dist ./src
-CMD npm run migrate && node ./src/index.js
+CMD npm run start
