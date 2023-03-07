@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "prisma db push && nodemon src"
+    "migrate": "prisma db push",
+    "start": "nodemon src"
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",
