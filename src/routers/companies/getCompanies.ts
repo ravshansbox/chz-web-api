@@ -1,6 +1,5 @@
-import { type Route } from '@ravshansbox/mini-app';
+import { sendJson, type Route } from '@ravshansbox/mini-app';
 import { parseAccessToken } from '../../common/parseAccessToken';
-import { sendJson } from '../../common/sendJson';
 import { prismaClient } from '../../prismaClient';
 
 export const getCompanies: Route = {
