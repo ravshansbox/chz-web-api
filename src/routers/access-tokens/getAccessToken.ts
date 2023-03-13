@@ -13,7 +13,7 @@ export const getAccessToken: Route = {
   handler: async ({ pathParams: rawPathParams, response }) => {
     const pathParams = validate(paramsSchema, rawPathParams);
     const accessToken = await prismaClient.accessToken.findUnique({
-      include: { user: { select: { id: true, username: true } } },
+      include: { user: { select: { id: true, username: true, is_root: true } } },
       where: { id: pathParams.id },
     });
     if (accessToken === null) {
