@@ -4,7 +4,7 @@ import { prismaClient } from '../prismaClient';
 
 export const parseAccessToken = async (request: IncomingMessage) => {
   const { authorization } = request.headers;
-  if (typeof authorization === 'undefined') {
+  if (authorization === undefined) {
     throw new HttpError('No Authorization header', 403);
   }
   const result = /Bearer (.+)/.exec(authorization);

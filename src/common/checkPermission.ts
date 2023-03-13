@@ -9,7 +9,7 @@ export const checkPermission = async (
   const permission = await prismaClient.permission.findUnique({
     where: { company_id_user_id: { company_id, user_id } },
   });
-  if (permission === null || (typeof type !== 'undefined' && permission.type !== type)) {
+  if (permission === null || (type !== undefined && permission.type !== type)) {
     throw new Error(`User ${user_id} needs ${type} permission on ${company_id}`);
   }
 };
