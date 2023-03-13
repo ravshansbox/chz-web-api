@@ -13,8 +13,8 @@ export const createCompany: Route = {
   method: 'POST',
   path: '',
   handler: async ({ request, response }) => {
-    const accessToken = await parseAccessToken(request);
     const body = validate(bodySchema, await parseJsonBody(request));
+    const accessToken = await parseAccessToken(request);
     const company = await prismaClient.company.create({
       data: { id: createId(), name: body.name },
     });
