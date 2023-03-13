@@ -25,7 +25,7 @@ export const createAccessToken: Route = {
     }
     const accessToken = await prismaClient.accessToken.create({
       data: { id: createId(), user_id: user.id },
-      include: { user: { select: { id: true, username: true } } },
+      include: { user: { select: { id: true, username: true, is_root: true } } },
     });
     sendJson(response, accessToken, 201);
   },
